@@ -1,0 +1,26 @@
+{
+  "feature_cols": [
+    "temperature",
+    "humidity",
+    "rainfall",
+    "bat_infection_index",
+    "population_density",
+    "growth_rate",
+    "moving_avg_7",
+    "hospital_stress"
+  ],
+  "rf_params": {
+    "n_estimators": 150,
+    "max_depth": 6,
+    "min_samples_split": 6,
+    "random_state": 42
+  },
+  "decision_threshold": 0.55,
+  "outbreak_threshold_def": "district_mean + 2.0*district_std",
+  "arima_order": [
+    2,
+    1,
+    2
+  ],
+  "forecast_horizon_days": 14
+}
