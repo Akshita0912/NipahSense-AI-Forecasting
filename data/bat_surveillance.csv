@@ -1,0 +1,181 @@
+date,district,bat_infection_index
+2026-01-01,Kozhikode,0.68
+2026-01-01,North 24 Parganas,0.38
+2026-01-01,Faridpur,0.63
+2026-01-02,Kozhikode,0.45
+2026-01-02,North 24 Parganas,0.54
+2026-01-02,Faridpur,0.24
+2026-01-03,Kozhikode,0.24
+2026-01-03,North 24 Parganas,0.59
+2026-01-03,Faridpur,0.44
+2026-01-04,Kozhikode,0.6
+2026-01-04,North 24 Parganas,0.74
+2026-01-04,Faridpur,0.54
+2026-01-05,Kozhikode,0.25
+2026-01-05,North 24 Parganas,0.74
+2026-01-05,Faridpur,0.72
+2026-01-06,Kozhikode,0.61
+2026-01-06,North 24 Parganas,0.68
+2026-01-06,Faridpur,0.67
+2026-01-07,Kozhikode,0.71
+2026-01-07,North 24 Parganas,0.72
+2026-01-07,Faridpur,0.62
+2026-01-08,Kozhikode,0.64
+2026-01-08,North 24 Parganas,0.35
+2026-01-08,Faridpur,0.45
+2026-01-09,Kozhikode,0.62
+2026-01-09,North 24 Parganas,0.75
+2026-01-09,Faridpur,0.53
+2026-01-10,Kozhikode,0.63
+2026-01-10,North 24 Parganas,0.41
+2026-01-10,Faridpur,0.51
+2026-01-11,Kozhikode,0.59
+2026-01-11,North 24 Parganas,0.8
+2026-01-11,Faridpur,0.64
+2026-01-12,Kozhikode,0.35
+2026-01-12,North 24 Parganas,0.4
+2026-01-12,Faridpur,0.51
+2026-01-13,Kozhikode,0.76
+2026-01-13,North 24 Parganas,0.53
+2026-01-13,Faridpur,0.78
+2026-01-14,Kozhikode,0.2
+2026-01-14,North 24 Parganas,0.65
+2026-01-14,Faridpur,0.35
+2026-01-15,Kozhikode,0.45
+2026-01-15,North 24 Parganas,0.78
+2026-01-15,Faridpur,0.45
+2026-01-16,Kozhikode,0.62
+2026-01-16,North 24 Parganas,0.67
+2026-01-16,Faridpur,0.35
+2026-01-17,Kozhikode,0.35
+2026-01-17,North 24 Parganas,0.78
+2026-01-17,Faridpur,0.35
+2026-01-18,Kozhikode,0.79
+2026-01-18,North 24 Parganas,0.77
+2026-01-18,Faridpur,0.76
+2026-01-19,Kozhikode,0.7
+2026-01-19,North 24 Parganas,0.72
+2026-01-19,Faridpur,0.7
+2026-01-20,Kozhikode,0.52
+2026-01-20,North 24 Parganas,0.36
+2026-01-20,Faridpur,0.21
+2026-01-21,Kozhikode,0.75
+2026-01-21,North 24 Parganas,0.24
+2026-01-21,Faridpur,0.41
+2026-01-22,Kozhikode,0.44
+2026-01-22,North 24 Parganas,0.29
+2026-01-22,Faridpur,0.51
+2026-01-23,Kozhikode,0.38
+2026-01-23,North 24 Parganas,0.65
+2026-01-23,Faridpur,0.61
+2026-01-24,Kozhikode,0.64
+2026-01-24,North 24 Parganas,0.67
+2026-01-24,Faridpur,0.43
+2026-01-25,Kozhikode,0.65
+2026-01-25,North 24 Parganas,0.41
+2026-01-25,Faridpur,0.66
+2026-01-26,Kozhikode,0.59
+2026-01-26,North 24 Parganas,0.57
+2026-01-26,Faridpur,0.33
+2026-01-27,Kozhikode,0.62
+2026-01-27,North 24 Parganas,0.24
+2026-01-27,Faridpur,0.79
+2026-01-28,Kozhikode,0.71
+2026-01-28,North 24 Parganas,0.67
+2026-01-28,Faridpur,0.58
+2026-01-29,Kozhikode,0.69
+2026-01-29,North 24 Parganas,0.6
+2026-01-29,Faridpur,0.61
+2026-01-30,Kozhikode,0.31
+2026-01-30,North 24 Parganas,0.43
+2026-01-30,Faridpur,0.5
+2026-01-31,Kozhikode,0.75
+2026-01-31,North 24 Parganas,0.22
+2026-01-31,Faridpur,0.67
+2026-02-01,Kozhikode,0.56
+2026-02-01,North 24 Parganas,0.53
+2026-02-01,Faridpur,0.66
+2026-02-02,Kozhikode,0.24
+2026-02-02,North 24 Parganas,0.42
+2026-02-02,Faridpur,0.42
+2026-02-03,Kozhikode,0.2
+2026-02-03,North 24 Parganas,0.64
+2026-02-03,Faridpur,0.23
+2026-02-04,Kozhikode,0.66
+2026-02-04,North 24 Parganas,0.59
+2026-02-04,Faridpur,0.27
+2026-02-05,Kozhikode,0.33
+2026-02-05,North 24 Parganas,0.52
+2026-02-05,Faridpur,0.64
+2026-02-06,Kozhikode,0.23
+2026-02-06,North 24 Parganas,0.62
+2026-02-06,Faridpur,0.61
+2026-02-07,Kozhikode,0.35
+2026-02-07,North 24 Parganas,0.75
+2026-02-07,Faridpur,0.24
+2026-02-08,Kozhikode,0.74
+2026-02-08,North 24 Parganas,0.51
+2026-02-08,Faridpur,0.76
+2026-02-09,Kozhikode,0.39
+2026-02-09,North 24 Parganas,0.45
+2026-02-09,Faridpur,0.47
+2026-02-10,Kozhikode,0.64
+2026-02-10,North 24 Parganas,0.46
+2026-02-10,Faridpur,0.41
+2026-02-11,Kozhikode,0.44
+2026-02-11,North 24 Parganas,0.79
+2026-02-11,Faridpur,0.45
+2026-02-12,Kozhikode,0.63
+2026-02-12,North 24 Parganas,0.78
+2026-02-12,Faridpur,0.29
+2026-02-13,Kozhikode,0.45
+2026-02-13,North 24 Parganas,0.35
+2026-02-13,Faridpur,0.77
+2026-02-14,Kozhikode,0.46
+2026-02-14,North 24 Parganas,0.61
+2026-02-14,Faridpur,0.56
+2026-02-15,Kozhikode,0.74
+2026-02-15,North 24 Parganas,0.34
+2026-02-15,Faridpur,0.27
+2026-02-16,Kozhikode,0.77
+2026-02-16,North 24 Parganas,0.67
+2026-02-16,Faridpur,0.48
+2026-02-17,Kozhikode,0.26
+2026-02-17,North 24 Parganas,0.39
+2026-02-17,Faridpur,0.32
+2026-02-18,Kozhikode,0.53
+2026-02-18,North 24 Parganas,0.48
+2026-02-18,Faridpur,0.37
+2026-02-19,Kozhikode,0.22
+2026-02-19,North 24 Parganas,0.64
+2026-02-19,Faridpur,0.77
+2026-02-20,Kozhikode,0.26
+2026-02-20,North 24 Parganas,0.28
+2026-02-20,Faridpur,0.57
+2026-02-21,Kozhikode,0.32
+2026-02-21,North 24 Parganas,0.53
+2026-02-21,Faridpur,0.28
+2026-02-22,Kozhikode,0.5
+2026-02-22,North 24 Parganas,0.46
+2026-02-22,Faridpur,0.22
+2026-02-23,Kozhikode,0.65
+2026-02-23,North 24 Parganas,0.45
+2026-02-23,Faridpur,0.58
+2026-02-24,Kozhikode,0.62
+2026-02-24,North 24 Parganas,0.2
+2026-02-24,Faridpur,0.25
+2026-02-25,Kozhikode,0.23
+2026-02-25,North 24 Parganas,0.59
+2026-02-25,Faridpur,0.62
+2026-02-26,Kozhikode,0.57
+2026-02-26,North 24 Parganas,0.43
+2026-02-26,Faridpur,0.73
+2026-02-27,Kozhikode,0.22
+2026-02-27,North 24 Parganas,0.36
+2026-02-27,Faridpur,0.23
+2026-02-28,Kozhikode,0.25
+2026-02-28,North 24 Parganas,0.79
+2026-02-28,Faridpur,0.32
+2026-03-01,Kozhikode,0.21
+2026-03-01,North 24 Parganas,0.77
+2026-03-01,Faridpur,0.64
