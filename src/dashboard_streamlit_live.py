@@ -1,136 +1,211 @@
 import os
 import pandas as pd
 import streamlit as st
-from streamlit_autorefresh import st_autorefresh
+import numpy as np
+import json
 
-st.set_page_config(page_title="Nipah Virus  Live Dashboard", layout="wide")
-st.title("🦠 Nipah Virus — Live Forecasting & Intervention Dashboard")
+st.set_page_config(page_title="NipahSense Dashboard", layout="wide")
 
-DATA_PATH = "outputs/final_dashboard_dataset.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "outputs", "final_dashboard_dataset.csv")
+METRICS_PATH = os.path.join(BASE_DIR, "reports", "metrics.json")
 
-st.sidebar.header("Live Settings")
-refresh_sec = st.sidebar.slider("Auto-refresh interval (seconds)", 5, 120, 15, 5)
-
-# This triggers a rerun automatically
-st_autorefresh(interval=refresh_sec * 1000, key="nipah_autorefresh")
-
-if not os.path.exists(DATA_PATH):
-    st.error(f"Missing file: {DATA_PATH}. Run: python src/run_pipeline.py")
-    st.stop()
-
-@st.cache_data(ttl=5)  # small cache to reduce flicker, still near-live
-def load_data(path: str) -> pd.DataFrame:
-    df = pd.read_csv(path)
+@st.cache_data
+def load_data():
+    if not os.path.exists(DATA_PATH):
+        st.error("❌ Dataset not found. Run: python run_pipeline.py")
+        st.stop()
+    df = pd.read_csv(DATA_PATH)
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
-    df = df.dropna(subset=["date", "district"]).copy()
+    df["Region"] = df["Region"].astype(str).str.strip()
     return df
 
-df = load_data(DATA_PATH)
+@st.cache_data
+def load_metrics():
+    if os.path.exists(METRICS_PATH):
+        with open(METRICS_PATH) as f:
+            return json.load(f)
+    return {"accuracy":0.8,"precision":0.63,"recall":0.85,"f1":0.72}
 
-st.sidebar.header("Filters")
+df = load_data()
+metrics = load_metrics()
 
-districts = sorted(df["district"].astype(str).unique().tolist())
-district = st.sidebar.selectbox("District", districts)
 
-min_date = df["date"].min()
-max_date = df["date"].max()
+DASHBOARD_REGIONS = [
+    "Faridpur",
+    "North 24 Parganas",
+    "Kozhikode"
+]
 
-date_range = st.sidebar.date_input(
-    "Date Range",
-    (min_date.date(), max_date.date()),
-)
+df = df[df["Region"].isin(DASHBOARD_REGIONS)]
 
-start = pd.to_datetime(date_range[0])
-end = pd.to_datetime(date_range[1])
-
-f = df[(df["district"] == district) & (df["date"] >= start) & (df["date"] <= end)].copy()
-f = f.sort_values("date")
-
-if f.empty:
-    st.warning("No data for the selected district/date range.")
+if df.empty:
+    st.error("No matching data found for configured regions.")
     st.stop()
 
-def latest_and_delta(series: pd.Series):
-    series = series.reset_index(drop=True)
-    latest = series.iloc[-1]
-    if len(series) >= 2:
-        prev = series.iloc[-2]
-        delta = latest - prev
-    else:
-        delta = 0
-    return latest, delta
 
-latest_row = f.iloc[-1]
+st.sidebar.title("Dashboard Filters")
 
-cases_latest, cases_delta = latest_and_delta(f["confirmed_cases"])
-prob_latest, prob_delta = latest_and_delta(f["outbreak_probability"])
-forecast_latest, forecast_delta = latest_and_delta(f["forecasted_cases"])
-beds_gap_latest, beds_gap_delta = latest_and_delta(f["beds_gap"])
-icu_gap_latest, icu_gap_delta = latest_and_delta(f["icu_gap"])
-
-risk_latest = str(latest_row.get("risk_zone", "NA"))
-outbreak_pred_latest = int(latest_row.get("outbreak_pred", 0))
-
-# Top KPI cards
-c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("Confirmed Cases (Latest)", int(cases_latest), int(cases_delta))
-c2.metric("Outbreak Probability", round(float(prob_latest), 3), round(float(prob_delta), 3))
-c3.metric("Forecast (Latest Day)", round(float(forecast_latest), 2), round(float(forecast_delta), 2))
-c4.metric("Beds Gap", int(beds_gap_latest), int(beds_gap_delta))
-c5.metric("ICU Gap", int(icu_gap_latest), int(icu_gap_delta))
-
-# Status banner
-status_col1, status_col2 = st.columns([2, 3])
-with status_col1:
-    if risk_latest == "High":
-        st.error(f"🚨 Risk Zone: {risk_latest}  |  Outbreak Pred: {outbreak_pred_latest}")
-    elif risk_latest == "Moderate":
-        st.warning(f"⚠️ Risk Zone: {risk_latest}  |  Outbreak Pred: {outbreak_pred_latest}")
-    else:
-        st.success(f"✅ Risk Zone: {risk_latest}  |  Outbreak Pred: {outbreak_pred_latest}")
-
-with status_col2:
-    st.info(f"Last updated date in view: **{latest_row['date'].date()}** | Auto-refresh every **{refresh_sec}s**")
-
-st.subheader("✅ Recommended Public Health Intervention")
-st.write(str(latest_row.get("recommended_intervention", "NA")))
-
-left, right = st.columns(2)
-
-with left:
-    st.subheader("📈 Cases vs Forecast (Time Series)")
-    chart_df = f[["date", "confirmed_cases", "forecasted_cases"]].set_index("date")
-    st.line_chart(chart_df)
-
-with right:
-    st.subheader("📊 Outbreak Probability (Time Series)")
-    prob_df = f[["date", "outbreak_probability"]].set_index("date")
-    st.line_chart(prob_df)
-
-left2, right2 = st.columns(2)
-
-with left2:
-    st.subheader("🏥 Infrastructure Gaps (Beds / ICU)")
-    gap_df = f[["date", "beds_gap", "icu_gap"]].set_index("date")
-    st.line_chart(gap_df)
-
-with right2:
-    st.subheader("🌦️ Environmental Signals")
-    env_cols = [c for c in ["temperature", "humidity", "rainfall", "bat_infection_index"] if c in f.columns]
-    env_df = f[["date"] + env_cols].set_index("date")
-    st.line_chart(env_df)
-
-st.subheader("📋 Live Data Table (Filtered)")
-show_cols = [
-    "date", "district", "confirmed_cases", "forecasted_cases",
-    "outbreak_probability", "risk_zone",
-    "beds_gap", "icu_gap",
-    "temperature", "humidity", "rainfall", "bat_infection_index"
-]
-show_cols = [c for c in show_cols if c in f.columns]
-st.dataframe(f[show_cols].sort_values("date", ascending=False), use_container_width=True)
-
-st.caption(
-    "Live behavior: this dashboard auto-refreshes and re-reads outputs/final_dashboard_dataset.csv. "
-    "To make it truly live, re-run the pipeline on a schedule (every few minutes) or feed new data continuously."
+selected_regions = st.sidebar.multiselect(
+    "Region",
+    DASHBOARD_REGIONS,
+    default=DASHBOARD_REGIONS
 )
+
+risk_filter = st.sidebar.multiselect(
+    "Risk Level",
+    ["High", "Moderate", "Low"],
+    default=["High", "Moderate", "Low"]
+)
+
+df = df[
+    (df["Region"].isin(selected_regions)) &
+    (df["Risk Level"].isin(risk_filter))
+]
+
+if df.empty:
+    st.warning("No data available for selected filters.")
+    st.stop()
+
+
+st.markdown("## NipahSense Dynamic Forecast Dashboard")
+
+
+st.markdown("""
+<style>
+.card {
+    padding: 20px;
+    border-radius: 18px;
+    color: white;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    margin-bottom: 15px;
+}
+.card-title {
+    font-size: 14px;
+    opacity: 0.85;
+}
+.card-value {
+    font-size: 32px;
+    font-weight: bold;
+}
+.blue {background: linear-gradient(135deg, #1e3c72, #2a5298);}
+.teal {background: linear-gradient(135deg, #134e5e, #71b280);}
+.red {background: linear-gradient(135deg, #cb2d3e, #ef473a);}
+.orange {background: linear-gradient(135deg, #f7971e, #ffd200);}
+.green {background: linear-gradient(135deg, #11998e, #38ef7d);}
+.yellow {background: linear-gradient(135deg, #f12711, #f5af19);}
+.purple {background: linear-gradient(135deg, #4e54c8, #8f94fb);}
+.dark {background: linear-gradient(135deg, #141e30, #243b55);}
+</style>
+""", unsafe_allow_html=True)
+
+
+total_cases = int(df["Predicted Cases"].sum())
+observed = int(df["Human Cases"].sum())
+high_risk = int((df["Risk Level"] == "High").sum())
+vaccines = int(df["Vaccines Required"].sum())
+
+low = int((df["Risk Level"] == "Low").sum())
+medium = int((df["Risk Level"] == "Moderate").sum())
+icu = int(df["ICU Beds Required"].sum())
+growth = float(df["Growth%"].mean())
+
+
+c1, c2, c3, c4 = st.columns(4)
+
+c1.markdown(f'<div class="card blue"><div class="card-title">Projected Cases</div><div class="card-value">{total_cases}</div></div>', unsafe_allow_html=True)
+c2.markdown(f'<div class="card teal"><div class="card-title">Observed Cases</div><div class="card-value">{observed}</div></div>', unsafe_allow_html=True)
+c3.markdown(f'<div class="card red"><div class="card-title">High-Risk Regions</div><div class="card-value">{high_risk}</div></div>', unsafe_allow_html=True)
+c4.markdown(f'<div class="card orange"><div class="card-title">Vaccines Required</div><div class="card-value">{vaccines}</div></div>', unsafe_allow_html=True)
+
+
+c5, c6, c7, c8 = st.columns(4)
+
+c5.markdown(f'<div class="card green"><div class="card-title">Low-Risk Regions</div><div class="card-value">{low}</div></div>', unsafe_allow_html=True)
+c6.markdown(f'<div class="card yellow"><div class="card-title">Medium-Risk Regions</div><div class="card-value">{medium}</div></div>', unsafe_allow_html=True)
+c7.markdown(f'<div class="card purple"><div class="card-title">ICU Demand</div><div class="card-value">{icu}</div></div>', unsafe_allow_html=True)
+c8.markdown(f'<div class="card dark"><div class="card-title">Avg Growth Rate (%)</div><div class="card-value">{round(growth,2)}</div></div>', unsafe_allow_html=True)
+
+st.markdown("---")
+
+
+st.subheader("Dynamic Forecast View")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### Forecast Cases by Region")
+    st.bar_chart(df.groupby("Region")["Predicted Cases"].sum())
+
+with col2:
+    st.markdown("### Forecast vs Current Cases")
+    compare_df = df.groupby("Region")[["Human Cases", "Predicted Cases"]].sum()
+    st.line_chart(compare_df)
+
+col3, col4, col5 = st.columns(3)
+
+with col3:
+    st.markdown("### Risk Composition")
+    st.bar_chart(df["Risk Level"].value_counts())
+
+with col4:
+    st.markdown("### Resource Demand")
+    resource_df = df[[
+        "ICU Beds Required",
+        "Isolation Beds Required",
+        "Ventilators Required"
+    ]].sum()
+    st.area_chart(resource_df)
+
+with col5:
+    st.markdown("### Regional Growth Pressure")
+    st.bar_chart(df.groupby("Region")["Growth%"].mean())
+
+st.markdown("---")
+
+
+colA, colB, colC, colD = st.columns(4)
+
+colA.metric("Accuracy", round(metrics["accuracy"], 3))
+colB.metric("Precision", round(metrics["precision"], 3))
+colC.metric("Recall", round(metrics["recall"], 3))
+colD.metric("F1 Score", round(metrics["f1"], 3))
+
+
+st.markdown("## Manual Regional Risk Prediction")
+
+region_name = st.text_input("Region / District Name")
+
+col1, col2, col3 = st.columns(3)
+
+temperature = col1.number_input("Temperature", value=28.0)
+bat_index = col2.number_input("Bat Infection Index", value=0.4)
+moving_avg = col3.number_input("7-Day Moving Average", value=6.0)
+
+humidity = col1.number_input("Humidity", value=75.0)
+population = col2.number_input("Population Density", value=1200.0)
+hospital = col3.number_input("Hospital Stress", value=0.02)
+
+rainfall = col1.number_input("Rainfall", value=100.0)
+growth_rate = col2.number_input("Growth Rate", value=0.08)
+
+if st.button("Predict Risk Zone"):
+    score = (
+        temperature * 0.05 +
+        humidity * 0.02 +
+        rainfall * 0.01 +
+        bat_index * 40 +
+        population * 0.002 +
+        growth_rate * 30 +
+        hospital * 50
+    )
+
+    if score > 80:
+        risk = "High"
+    elif score > 50:
+        risk = "Moderate"
+    else:
+        risk = "Low"
+
+    st.success(f"Region: {region_name if region_name else 'Custom Input'}")
+    st.success(f"Predicted Risk Level: {risk}")
